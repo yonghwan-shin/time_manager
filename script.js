@@ -1,4 +1,5 @@
 document.getElementById('connectButton').addEventListener('click', async () => {
+  console.log("heelo");
   const status = document.getElementById('status');
   const dataInput = document.getElementById('dataInput');
   status.textContent = 'Requesting Bluetooth Device...';
