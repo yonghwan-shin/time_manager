@@ -1,29 +1,30 @@
-async function connectAndSend() {
-  try {
-    const status = document.getElementById('status');
-    status.textContent = 'Requesting Bluetooth Device...';
+document.getElementById('connectButton').addEventListener('click', async () => {
+  const status = document.getElementById('status');
+  const dataInput = document.getElementById('dataInput');
+  status.textContent = 'Requesting Bluetooth Device...';
 
-    // Request a BLE device with the matching service UUID
+  try {
+    // Request the Arduino device with the matching service UUID
     const device = await navigator.bluetooth.requestDevice({
-      filters: [{ services: ['19b10000-e8f2-537e-4f6c-d104768a1214'] }]
+      filters: [{ services: ['12345678-1234-1234-1234-123456789abc'] }]
     });
 
     status.textContent = 'Connecting to GATT Server...';
     const server = await device.gatt.connect();
 
     status.textContent = 'Getting Service...';
-    const service = await server.getPrimaryService('19b10000-e8f2-537e-4f6c-d104768a1214');
+    const service = await server.getPrimaryService('12345678-1234-1234-1234-123456789abc');
 
     status.textContent = 'Getting Characteristic...';
-    const characteristic = await service.getCharacteristic('19b10001-e8f2-537e-4f6c-d104768a1214');
+    const characteristic = await service.getCharacteristic('87654321-4321-4321-4321-abcdef654321');
 
-    // Get the data from the input field
-    const dataToSend = document.getElementById('dataInput').value;
+    // Use the input value or default to "Hello, Arduino!"
+    const dataToSend = dataInput.value || 'Hello, Arduino!';
+    const encoder = new TextEncoder();
+    await characteristic.writeValue(encoder.encode(dataToSend));
 
-    // Send the data to the Arduino
-    await characteristic.writeValue(new TextEncoder().encode(dataToSend));
     status.textContent = `Data sent: ${dataToSend}`;
   } catch (error) {
     status.textContent = `Error: ${error}`;
   }
-}
+});
